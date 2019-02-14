@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <nav className="nav-wrapper deep-purple darken-1">
       <div className="container">
-        <Link to='/' className='brand-logo'>MyReactBlog</Link>
+        <Link to='/' className='brand-logo left'>MyReactBlog</Link>
         <SignedInLinks />
         <SignedOutLinks />
       </div>
