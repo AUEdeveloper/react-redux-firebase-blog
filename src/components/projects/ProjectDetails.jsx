@@ -8,7 +8,7 @@ const ProjectDetails = (props) => {
   //const id = props.match.params.id; //this is route default props
   //console.log(props);
   const { project, auth } = props;
-  if (!auth.id) return <Redirect to="/signin" />
+  if (!auth.uid) return <Redirect to="/signin" />
   
   if (project) {
     return (
