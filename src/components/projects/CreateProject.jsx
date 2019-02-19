@@ -19,6 +19,7 @@ class CreateProject extends Component {
     e.preventDefault();
     //console.log(this.state);
     this.props.createProject(this.state);
+    //console.log(this.props)
     this.props.history.push('/'); //redirect to homepage
   }
 
