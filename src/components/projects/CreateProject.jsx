@@ -1,26 +1,62 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createProject } from './../../store/actions/projectActions';
+import { createProject, addImage } from './../../store/actions/projectActions';
 import { Redirect } from 'react-router-dom';
+import firebase from "firebase";//ffffffffffffffff
+import FileUploader from "react-firebase-file-uploader";//ffffffffffffffffffffffff
 
 class CreateProject extends Component {
   state = {
     title: '',
-    content: ''
+    content: '',
+    imageName: '',
+    isUploading: false,//ffffffff
+    progress: 0,//ffffffffffffffff
+    imageURL: ''//ffffffffffffffff
   }
 
   handleChange(e) {
     this.setState({
       [e.target.id]: e.target.value
-    })
+    });
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    //console.log(this.state);
+
+    this.setState({imageURL: this.refs.image1});
+
+    console.log('imagURL ' + this.state.imageURL);
+
     this.props.createProject(this.state);
-    //console.log(this.props)
     this.props.history.push('/'); //redirect to homepage
+  }
+
+  handleUploadStart(){ 
+    this.setState({ isUploading: true, progress: 0 });//ffffffffffffff
+  }
+
+  handleProgress(progress) {
+    this.setState({ progress });//ffffffffffffffffffff
+  }
+  
+  handleUploadError(error) {
+    this.setState({ isUploading: false });//ffffffffffffffffff
+    console.error(error);
+  }
+
+  handleUploadSuccess(imageName) {
+    this.setState({ imageName: imageName, progress: 100, isUploading: false });
+    this.props.addImage(this.state);
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.imageURL !== nextProps.imageURL) {
+      return {
+        imageURL: nextProps.imageURL
+      }
+    }
+    return null;
   }
 
   render() {
@@ -40,6 +76,19 @@ class CreateProject extends Component {
             <label htmlFor="content">Project Content</label>
             <textarea id="content" className="materialize-textarea" onChange={this.handleChange.bind(this)}></textarea>
           </div>
+            <label>Image:</label>
+            {this.state.isUploading && <p>Progress: {this.state.progress}</p>}
+            {this.props.imageURL && <img src={this.props.imageURL}  alt="img" />}
+            <FileUploader
+              accept="image/*"
+              name="image"
+              randomizeFilename
+              storageRef={firebase.storage().ref("images")}
+              onUploadStart={this.handleUploadStart.bind(this)}
+              onUploadError={this.handleUploadError.bind(this)}
+              onUploadSuccess={this.handleUploadSuccess.bind(this)}
+              onProgress={this.handleProgress.bind(this)}
+            />
           <div className="input-field">
             <button className="btn blue lightnen-1 z-depth-0">Create</button>
           </div>
@@ -50,14 +99,18 @@ class CreateProject extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ', state.project.imageURL);
+  const imageURL = state.project.imageURL ? state.project.imageURL : ''
   return {
-    auth: state.firebase.auth
+    auth: state.firebase.auth,
+    imageURL: imageURL
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createProject: (project) => dispatch(createProject(project))
+    createProject: (project) => dispatch(createProject(project)),
+    addImage: (project) => dispatch(addImage(project))//fffffffffffff
   }
 }
 

@@ -7,7 +7,7 @@ import moment from 'moment';
 
 const ProjectDetails = (props) => {
   //const id = props.match.params.id; //this is route default props
-  //console.log(props);
+
   const { project, auth } = props;
   if (!auth.uid) return <Redirect to="/signin" />
   
@@ -19,6 +19,7 @@ const ProjectDetails = (props) => {
             <span className="card-title">{ project.title }</span>
             <p>{ project.content }</p>
           </div>
+          {project.imageURL && <img src={project.imageURL} alt="" />}
           <div className="card-action gret lighten-4 grey-text">
             <div>Posted by {project.authorFirstName} {project.authorLastName}</div>
             <div>{moment(project.createdAt.toDate()).calendar()}</div>
@@ -39,7 +40,7 @@ const mapStateToProps = (state, ownProps) => {
   //console.log(state, ownProps);
   const id = ownProps.match.params.id;
   const projects = state.firestore.data.projects;
-  const project = projects ? projects[id] : null
+  const project = projects ? projects[id] : ''
   return {
     project: project,
     auth: state.firebase.auth

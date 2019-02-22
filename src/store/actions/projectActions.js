@@ -5,11 +5,14 @@ export const createProject = (project) => {
     const profile = getState().firebase.profile;
     const authorId = getState().firebase.auth.uid;
     firestore.collection('projects').add({
-      ...project,
+      title: project.title,//ffffffffffffff ...project
+      content: project.content,//ffffffff
       authorFirstName: profile.firstName,
       authorLastName: profile.lastName,
       authorId: authorId,
-      createdAt: new Date()
+      createdAt: new Date(),
+      filename: project.imageName,//fffffffffffffffff
+      imageURL: project.imageURL //fffffffffffffffffffffffff
     }).then(() => {
       dispatch({type: 'CREATE_PROJECT', project});
     }).catch((error) => {
@@ -17,3 +20,19 @@ export const createProject = (project) => {
     })
   }
 };
+
+export const addImage = (project) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();//ffffffffffffffffffff
+    firebase
+      .storage()
+      .ref("images")
+      .child(project.imageName)
+      .getDownloadURL()
+      .then(url => {
+        dispatch({type: 'ADD_IMAGE', url});
+      }).catch(error => {
+        dispatch({type: 'ADD_IMAGE_ERROR', error});
+      })
+  }
+}
