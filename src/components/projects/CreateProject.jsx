@@ -12,7 +12,8 @@ class CreateProject extends Component {
     imageName: '',
     isUploading: false,//ffffffff
     progress: 0,//ffffffffffffffff
-    imageURL: ''//ffffffffffffffff
+    imageURL: '',//fffffffffffffff
+    isShow: false
   }
 
   handleChange(e) {
@@ -23,12 +24,8 @@ class CreateProject extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
-    this.setState({imageURL: this.refs.image1});
-
-    console.log('imagURL ' + this.state.imageURL);
-
     this.props.createProject(this.state);
+    this.setState({isShow: false});
     this.props.history.push('/'); //redirect to homepage
   }
 
@@ -48,6 +45,7 @@ class CreateProject extends Component {
   handleUploadSuccess(imageName) {
     this.setState({ imageName: imageName, progress: 100, isUploading: false });
     this.props.addImage(this.state);
+    this.setState({isShow: true});
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -67,28 +65,51 @@ class CreateProject extends Component {
     return (
       <div className="container">
         <form onSubmit={this.handleSubmit.bind(this)} className="white">
-          <h5 className="grey-text text-darken-3">Create New Project</h5>
+          <h5 className="grey-text text-darken-3">Create New Post</h5>
           <div className="input-field">
             <label htmlFor="title">Title</label>
             <input type="text" id="title" onChange={this.handleChange.bind(this)}/>
           </div>
           <div className="input-field">
-            <label htmlFor="content">Project Content</label>
+            <label htmlFor="content">Content</label>
             <textarea id="content" className="materialize-textarea" onChange={this.handleChange.bind(this)}></textarea>
           </div>
-            <label>Image:</label>
-            {this.state.isUploading && <p>Progress: {this.state.progress}</p>}
-            {this.props.imageURL && <img src={this.props.imageURL}  alt="img" />}
-            <FileUploader
-              accept="image/*"
-              name="image"
-              randomizeFilename
-              storageRef={firebase.storage().ref("images")}
-              onUploadStart={this.handleUploadStart.bind(this)}
-              onUploadError={this.handleUploadError.bind(this)}
-              onUploadSuccess={this.handleUploadSuccess.bind(this)}
-              onProgress={this.handleProgress.bind(this)}
-            />
+
+          {this.state.isUploading &&
+            <div className="progress">
+              <div className="indeterminate blue"></div>
+            </div>
+          }
+
+          {this.state.isShow === true && 
+            <div className="container">
+              <div className="col s6">
+                {this.state.imageURL && 
+                 <img src={this.state.imageURL}  
+                      alt="img" style={{ display: 'block', margin: '0 auto', maxHeight: '200px', maxWidth: '100px' }}
+                 />}
+              </div>
+            </div>
+          }
+
+          <br/>
+          {this.state.isShow === false && 
+            <label style={{backgroundColor: '#2196f3', color: 'white', padding: 10, borderRadius: 4, pointer: 'cursor'}}>
+              Choose your image
+              <FileUploader
+                hidden
+                accept="image/*"
+                name="image"
+                randomizeFilename
+                storageRef={firebase.storage().ref("images")}
+                onUploadStart={this.handleUploadStart.bind(this)}
+                onUploadError={this.handleUploadError.bind(this)}
+                onUploadSuccess={this.handleUploadSuccess.bind(this)}
+                onProgress={this.handleProgress.bind(this)}
+              />
+            </label>
+          }
+
           <div className="input-field">
             <button className="btn blue lightnen-1 z-depth-0">Create</button>
           </div>
@@ -99,7 +120,7 @@ class CreateProject extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ', state.project.imageURL);
+  //console.log(state.project.imageURL);
   const imageURL = state.project.imageURL ? state.project.imageURL : ''
   return {
     auth: state.firebase.auth,

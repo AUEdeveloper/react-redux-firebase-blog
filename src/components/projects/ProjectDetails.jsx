@@ -19,7 +19,7 @@ const ProjectDetails = (props) => {
             <span className="card-title">{ project.title }</span>
             <p>{ project.content }</p>
           </div>
-          {project.imageURL && <img src={project.imageURL} alt="" />}
+          {project.imageURL && <img src={project.imageURL} alt="" style={{ display: 'block', margin: '0 auto', maxHeight: '200px', maxWidth: '100px' }}/>}
           <div className="card-action gret lighten-4 grey-text">
             <div>Posted by {project.authorFirstName} {project.authorLastName}</div>
             <div>{moment(project.createdAt.toDate()).calendar()}</div>

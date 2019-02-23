@@ -11,7 +11,6 @@ export const createProject = (project) => {
       authorLastName: profile.lastName,
       authorId: authorId,
       createdAt: new Date(),
-      filename: project.imageName,//fffffffffffffffff
       imageURL: project.imageURL //fffffffffffffffffffffffff
     }).then(() => {
       dispatch({type: 'CREATE_PROJECT', project});
